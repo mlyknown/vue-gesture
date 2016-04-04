@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title></title>
+  <style type="text/css">
+    *{margin:  0; padding: 0;}
+    .button{width: 50px;height: 50px;background: #ADADAD;float: left;width: 40%;margin: 5%;word-break: normal;word-wrap: break-word;}
+  }
+  </style>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.20/vue.js"></script>
+  <script src="./vue-gesture.js"></script>
+</head>
+
+<body id = 'app'>
+
+<div class="button" v-gesture::tap="handle($event, 'tap')" v-gesture:swipe="handle($event, 'swipe')"></div>
+<div class="button" v-gesture::tap="handle($event, 'tap')"></div>
+<div class="button" v-gesture::singletap="handle($event, 'singleTap')"></div>
+<div class="button" v-gesture::doubletap="handle($event, 'doubleTap')"></div>
+<div class="button" v-gesture::longTap="handle($event, 'longTap')"></div>
+<div class="button" v-gesture::swipe="handle($event, 'swipe')"></div>
+<div class="button" v-gesture::swipeLeft="handle($event, 'swipeLeft')"></div>
+<div class="button" v-gesture::swipeRight="handle($event, 'swipeRight')"></div>
+<div class="button" v-gesture::swipeUp="handle($event, 'swipeUp')"></div>
+<div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')"></div>
+
+<script type="text/javascript">
+  new Vue({
+  el: '#app',
+    data: {
+      message: 'Hello Vue.js!'
+    },
+    methods: {
+      handle: function(e, str){
+        e.target.innerHTML += (str+"  ")
+      }
+    }
+  })
+
+</script>
+</body>
+</html>
