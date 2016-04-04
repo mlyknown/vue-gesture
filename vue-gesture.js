@@ -6,6 +6,7 @@
 // doubleTap — this pair of events can be used to detect both single and double taps on the same element (if you don’t need double tap detection, use tap instead).
 // longTap — fires when an element is tapped and the finger is held down for more than 750ms.
 // swipe, swipeLeft, swipeRight, swipeUp, swipeDown — fires when an element is swiped (optionally in the given direction)
+// touchstart touchmove touchend - These equivalent to touch the primary event
 
 ;(function(){
   if(vueGesture && vueGesture.config && vueGesture.config.id === "vue-Gesture@ylminglmingming@gmail.com") return;
@@ -39,7 +40,7 @@
   vueGesture.config = {
     maxSingleTapTimeInterval : 300, // ms
     maxSingleTapPageDistanceSquared : 25, // within 5px we consider it as a single tap
-    minLongtapTimeInterval : 750,
+    minLongtapTimeInterval : 700,
     maxDoubleTapTimeInterval: 300,
     maxDoubleTapPageDistanceSquared: 64 //8px
   };
@@ -53,12 +54,12 @@
       self.el.addEventListener('touchstart',function(e) {
         if(_self.isPrimaryTouch(e)) return;
         _self.touchstartHandler(self, e);
-        console.log("start");
+        // console.log("start");
         },false);
       self.el.addEventListener('touchmove',function(e) {
         if(_self.isPrimaryTouch(e)) return;
         _self.touchmoveHandler(self, e);
-        console.log("move", event.touches[0].pageX, event.touches[0].pageY);
+        // console.log("move", event.touches[0].pageX, event.touches[0].pageY);
       },false);
       self.el.addEventListener('touchend',function(e) {
         if(_self.isPrimaryTouch(e)) return;

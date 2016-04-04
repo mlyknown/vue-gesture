@@ -15,9 +15,8 @@
 
 <body id = 'app'>
 
-  <div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')" v-gesture:swipe.stop.prevent="handle($event, 'swipe')"></div>
   <div class="button" v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
-  <div class="button" v-gesture:touchmove.stop.prevent="handle($event, 'touchmove')">touchmove</div>
+  <div class="button" v-gesture:touchmove="handle($event, 'touchmove')">touchmove</div>
   <div class="button" v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
   <div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
   <div class="button" v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
