@@ -42,174 +42,239 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	//     Zepto.js
-	//     (c) 2010-2016 Thomas Fuchs
-	//     Zepto.js may be freely distributed under the MIT license.
+	// tap — fires when the element is tapped.
+	// singleTap and doubleTap — this pair of events can be used to detect both single and double taps on the same element (if you don’t need double tap detection, use tap instead).
+	// longTap — fires when an element is tapped and the finger is held down for more than 750ms.
+	// swipe, swipeLeft, swipeRight, swipeUp, swipeDown — fires when an element is swiped (optionally in the given direction)
 
-	;(function($){
-	  var touch = {},
-	    touchTimeout, tapTimeout, swipeTimeout, longTapTimeout,
-	    minTapDelay = 750,
-	    gesture
-
-	  function swipeDirection(x1, x2, y1, y2) {
-	    return Math.abs(x1 - x2) >=
-	      Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'Left' : 'Right') : (y1 - y2 > 0 ? 'Up' : 'Down')
+	(function(){
+	  //tode 如果存在就不运行了 if(vueGesture) return;
+	  var vueGesture = {};
+	  vueGesture.domCaches = {};
+	  vueGesture.gloabal = {
+	    domUuid : 1,
+	    InternalKeyName : "vueGestureInternalKey"
 	  }
-
-	  function longTap() {
-	    longTapTimeout = null
-	    if (touch.last) {
-	      touch.el.trigger('longTap')
-	      touch = {}
-	    }
-	  }
-
-	  function cancelLongTap() {
-	    if (longTapTimeout) clearTimeout(longTapTimeout)
-	    longTapTimeout = null
-	  }
-
-	  function cancelAll() {
-	    if (touchTimeout) clearTimeout(touchTimeout)
-	    if (tapTimeout) clearTimeout(tapTimeout)
-	    if (swipeTimeout) clearTimeout(swipeTimeout)
-	    if (longTapTimeout) clearTimeout(longTapTimeout)
-	    touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null
-	    touch = {}
-	  }
-
-	  function isPrimaryTouch(event){
-	    return (event.pointerType == 'touch' ||
-	      event.pointerType == event.MSPOINTER_TYPE_TOUCH)
-	      && event.isPrimary
-	  }
-
-	  function isPointerEventType(e, type){
-	    return (e.type == 'pointer'+type ||
-	      e.type.toLowerCase() == 'mspointer'+type)
-	  }
-
-	  $(document).ready(function(){
-	    var now, delta, deltaX = 0, deltaY = 0, firstTouch, _isPointerType
-
-	    if ('MSGesture' in window) {
-	      gesture = new MSGesture()
-	      gesture.target = document.body
-	    }
-
-	    $(document)
-	      .bind('MSGestureEnd', function(e){
-	        var swipeDirectionFromVelocity =
-	          e.velocityX > 1 ? 'Right' : e.velocityX < -1 ? 'Left' : e.velocityY > 1 ? 'Down' : e.velocityY < -1 ? 'Up' : null;
-	        if (swipeDirectionFromVelocity) {
-	          touch.el.trigger('swipe')
-	          touch.el.trigger('swipe'+ swipeDirectionFromVelocity)
+	  vueGesture.util={
+	        getType:function(o){    //判断对象类型
+	            var _t;
+	            return ((_t = typeof(o)) == "object" ? o==null && "null" || Object.prototype.toString.call(o).slice(8,-1):_t).toLowerCase();
+	        },
+	        deepClone:function(source){    //深拷贝
+	            var self=this;    //保存当前对象引用
+	            var destination=self.getType(source);
+	            destination=destination==='array'?[]:(destination==='object'?{}:source);
+	            for (var p in source) {
+	                if (self.getType(source[p]) === "array" || self.getType(source[p]) === "object") {
+	                    destination[p] = self.getType(source[p]) === "array" ? [] : {};
+	                    destination[p]=arguments.callee.call(self, source[p]);    //使用call修改函数的作用域
+	                } else {
+	                    destination[p] = source[p];
+	                }
+	            }
+	            return destination;
 	        }
-	      })
-	      .on('touchstart MSPointerDown pointerdown', function(e){
-	        if((_isPointerType = isPointerEventType(e, 'down')) &&
-	          !isPrimaryTouch(e)) return
-	        firstTouch = _isPointerType ? e : e.touches[0]
-	        if (e.touches && e.touches.length === 1 && touch.x2) {
-	          // Clear out touch movement data if we have it sticking around
-	          // This can occur if touchcancel doesn't fire due to preventDefault, etc.
-	          touch.x2 = undefined
-	          touch.y2 = undefined
-	        }
-	        now = Date.now()
-	        delta = now - (touch.last || now)
-	        touch.el = $('tagName' in firstTouch.target ?
-	          firstTouch.target : firstTouch.target.parentNode)
-	        touchTimeout && clearTimeout(touchTimeout)
-	        touch.x1 = firstTouch.pageX
-	        touch.y1 = firstTouch.pageY
-	        if (delta > 0 && delta <= 250) touch.isDoubleTap = true
-	        touch.last = now
-	        longTapTimeout = setTimeout(longTap, longTapDelay)
-	        // adds the current touch contact for IE gesture recognition
-	        if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
-	      })
-	      .on('touchmove MSPointerMove pointermove', function(e){
-	        if((_isPointerType = isPointerEventType(e, 'move')) &&
-	          !isPrimaryTouch(e)) return
-	        firstTouch = _isPointerType ? e : e.touches[0]
-	        cancelLongTap()
-	        touch.x2 = firstTouch.pageX
-	        touch.y2 = firstTouch.pageY
+	    };
+	  vueGesture.config = {
+	    maxSingleTapTimeInterval : 300, // ms
+	    maxSingleTapPageDistanceSquared : 25, // within 5px we consider it as a single tap
+	    minLongtapTimeInterval : 700
+	  };
 
-	        deltaX += Math.abs(touch.x1 - touch.x2)
-	        deltaY += Math.abs(touch.y1 - touch.y2)
-	      })
-	      .on('touchend MSPointerUp pointerup', function(e){
-	        if((_isPointerType = isPointerEventType(e, 'up')) &&
-	          !isPrimaryTouch(e)) return
-	        cancelLongTap()
+	  vueGesture.Statics = {       
+	    initEvents : function(self){
+	      var _self = this;
+	      var b = vueGesture.Statics.isInDomCaches(self);
+	      if(b) return;
+	      var domCache = vueGesture.Statics.getDomCache(self);
+	      self.el.addEventListener('touchstart',function(e) {
+	        _self.touchstartHandler(self, e);
+	        console.log("start");
+	        },false);
+	      self.el.addEventListener('touchmove',function(e) {
+	        e.preventDefault();
+	        _self.touchmoveHandler(self, e);
+	        console.log("move", event.touches[0].pageX, event.touches[0].pageY);
+	      },false);
+	      self.el.addEventListener('touchend',function(e) {
+	        _self.touchendHandler(self, e);
+	      },false);
+	    },
+	    invokeHandler : function(e, o, touch, gestureName){
+	      if (vueGesture.judgements[gestureName](touch)) {
+	        o.fn(e);;
+	      }
+	      if(o.modifiers.stop)
+	        e.stopPropagation();
+	      if(o.modifiers.prevent)
+	        e.preventDefault();
+	    },
+	    touchstartHandler : function(self, e) {
+	        var domCache = vueGesture.Statics.getDomCache(self);
+	        var touch = domCache.touch; 
+	        if(this.isPrimaryTouch(e)) return;
+	        touch.touchstartTime = e.timeStamp;
+	        touch.touchstartCoord.pageX = e.touches[0].pageX;
+	        touch.touchstartCoord.pageY = e.touches[0].pageY;
+	    },
+	    touchmoveHandler : function(self ,e){
 
-	        // swipe
-	        if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > 30) ||
-	            (touch.y2 && Math.abs(touch.y1 - touch.y2) > 30))
+	    },
+	    touchendHandler : function(self, e) {
+	      var _self = this;
+	      var domCache = vueGesture.Statics.getDomCache(self);
+	      var touch = domCache.touch; 
+	      touch.touchendTime = e.timeStamp;
+	      touch.touchendCoord.pageX = e.changedTouches[0].pageX;
+	      touch.touchendCoord.pageY = e.changedTouches[0].pageY;
+	      //is match condition;
+	      for (var o in domCache.gestureEvents){
+	        _self.invokeHandler(e, domCache.gestureEvents[o], touch, o);
+	      }
+	      touch.lastTouchstartTime = touch.touchstartTime;
+	      touch.lastTouchendTime = touch.touchendTime;
+	      touch.lastTouchstartCoord = vueGesture.util.deepClone(touch.touchstartCoord);
+	      touch.lastTouchstartCoord = vueGesture.util.deepClone(touch.touchendCoord);
+	    },
+	    getDomCache : function(self) {
+	        return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] || 
+	          (vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName] = vueGesture.gloabal.domUuid++] = this.initDomCache());
+	    },
+	    isInDomCaches : function(self){
+	        return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] ? true : false;
+	    },
+	    unbindDirective : function(self) {
+	      self.el.removeEventListener('click', invokeHandler)
+	      self.el.removeEventListener('touchend', handleTouchEnd)
+	      self.el.removeEventListener('touchstart', handleTouchStart)
+	    },
+	    initDomCache : function(){
+	      return {
+	        touch : {
+	          touchstartTime : 0,
+	          touchendTime : 0,
+	          touchstartCoord : {},
+	          touchendCoord : {},
 
-	          swipeTimeout = setTimeout(function() {
-	            touch.el.trigger('swipe')
-	            touch.el.trigger('swipe' + (swipeDirection(touch.x1, touch.x2, touch.y1, touch.y2)))
-	            touch = {}
-	          }, 0)
+	          lastTouchendTime : 0,
+	          lastTouchstartTime: 0,
+	          lastTouchstartCoord : {},
+	          lastPageXDistance : {},
 
-	        // normal tap
-	        else if ('last' in touch)
-	          // don't fire tap when delta position changed by more than 30 pixels,
-	          // for instance when moving to a point and back to origin
-	          if (deltaX < 30 && deltaY < 30) {
-	            // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
-	            // ('tap' fires before 'scroll')
-	            tapTimeout = setTimeout(function() {
-
-	              // trigger universal 'tap' with the option to cancelTouch()
-	              // (cancelTouch cancels processing of single vs double taps for faster 'tap' response)
-	              var event = $.Event('tap')
-	              event.cancelTouch = cancelAll
-	              touch.el.trigger(event)
-
-	              // trigger double tap immediately
-	              if (touch.isDoubleTap) {
-	                if (touch.el) touch.el.trigger('doubleTap')
-	                touch = {}
-	              }
-
-	              // trigger single tap after 250ms of inactivity
-	              else {
-	                touchTimeout = setTimeout(function(){
-	                  touchTimeout = null
-	                  if (touch.el) touch.el.trigger('singleTap')
-	                  touch = {}
-	                }, 250)
-	              }
-	            }, 0)
-	          } else {
-	            touch = {}
+	          get timeInterval () {
+	            return this.touchendTime - this.touchstartTime;
+	          },
+	          get pageXDistance () {
+	            return this.touchendCoord.pageX - this.touchstartCoord.pageX;
+	          },
+	          get pageYDistance () {
+	            return this.touchendCoord.pageY - this.touchstartCoord.pageY;
+	          },
+	          get lastTimeInterval () {
+	            return this.lastTouchendTime - this.lastTouchstartTime;
+	          },
+	          get lastPageXDistance () {
+	            return this.touchendCoord.pageX - this.touchstartCoord.pageX;
+	          },
+	          get lastPageYDistance () {
+	            return this.touchendCoord.pageY - this.touchstartCoord.pageY;
+	          },
+	          get deltaTime () {
+	            return this.touchendTime - this.lastTouchstartTime;
 	          }
-	          deltaX = deltaY = 0
+	        },
+	        gestureEvents: {}
+	      }
+	    },
+	    getEventNameByArg : function(arg){
+	      var str = (0 === arg.indexOf(':') ? arg.substr(1):arg);
+	      str = str.toLowerCase();
+	      if (typeof vueGesture.judgements[str] != "function") {
+	        return false;
+	      }
+	      return str;
+	    },
+	    isPrimaryTouch : function(event){
+	      // ensure swiping with one touch and not pinching
+	      return (event.touches.length > 1 || event.scale && event.scale !== 1);
+	    }
+	  };
 
-	      })
-	      // when the browser window loses focus,
-	      // for example when a modal dialog is shown,
-	      // cancel all ongoing events
-	      .on('touchcancel MSPointerCancel pointercancel', cancelAll)
 
-	    // scrolling the window indicates intention of the user
-	    // to scroll, not tap or swipe, so cancel all ongoing events
-	    $(window).on('scroll', cancelAll)
-	  })
+	  vueGesture.judgements = {
+	    'tap': function(touch){
+	      return (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
+	    },
+	    'singletap': function(touch){},
+	    'longtap': function(touch){
+	      return (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) > vueGesture.config.minLongtapTimeInterval;
+	    },
+	    'doubletap': function(touch){},
+	    'swipe': function(touch){
+	      return (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) > vueGesture.config.maxSingleTapPageDistanceSquared;
+	    },
+	    'swipeleft': function(touch){
+	      if(this['swipe'](touch)) return false;
+	      return touch.pageXDistance < 0 && Math.abs(touch.pageXDistance) > Math.abs(touch.pageYDistance);
+	    },
+	    'swiperight': function(touch){
+	      if(this['swipe'](touch)) return false;
+	      return touch.pageXDistance > 0 && Math.abs(touch.pageXDistance) > Math.abs(touch.pageYDistance);
+	    },
+	    'swipeup': function(touch){
+	      if(this['swipe'](touch)) return false;
+	      return touch.pageYDistance < 0 && Math.abs(touch.pageYDistance) > Math.abs(touch.pageXDistance);
+	    },
+	    'swipedown': function(touch){
+	      if(this['swipe'](touch)) return false;
+	      return touch.pageYDistance > 0 && Math.abs(touch.pageYDistance) > Math.abs(touch.pageXDistance);
+	    }
+	  };
+	  vueGesture.install = function(Vue){
+	    Vue.directive('gesture', {
+	      acceptStatement: true,
+	      priority: Vue.directive('on').priority,
 
-	  ;['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
-	    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName){
-	    $.fn[eventName] = function(callback){ return this.on(eventName, callback) }
-	  })
-	})(Zepto)
+	      bind: function () {
+	        var self = this;
+	        var domCache = vueGesture.Statics.initEvents(self);
+	      },
 
+	      update: function (fn) {
+	        var self = this;
+	        if(typeof fn !== 'function') {
+	          return console.error('The param of directive "v-tap" must be a function!');
+	        }
+	        var eventName = vueGesture.Statics.getEventNameByArg(self.arg);
+	        var domCache = vueGesture.Statics.getDomCache(self);
+	        if(!eventName) {
+	          console.error("self.arg not corrent argument");
+	          return;
+	        }
+	        domCache.gestureEvents[eventName] = {},
+	        domCache.gestureEvents[eventName].fn = fn;
+	        domCache.gestureEvents[eventName].modifiers = self.modifiers;
+	      },
+
+	      unbind: function () {
+	        vueGesture.Statics.unbindDirective(this);
+	      }
+	    });
+	  }
+
+	  if (true) {
+	    module.exports = vueGesture;
+	  } else if (typeof define === 'function' && define.amd) {
+	    define([], function() {
+	      return vueGesture;
+	    })
+	  } else if (window.Vue) {
+	    window.vueGesture = vueGesture;
+	    Vue.use(vueGesture);
+	  }
+	})()
 
 /***/ }
 /******/ ]);

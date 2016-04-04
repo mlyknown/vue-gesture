@@ -41,7 +41,7 @@ http://localhost:8080/webpack-dev-server/example.html
 There are two ways to customize recognizer options such as `direction` and `threshold`. The first one is setting global options:
 
 ``` js
-// change the threshold for all swipe recognizers
+// change the config
 vueGesture.config = {
   maxSingleTapTimeInterval: 200
 }

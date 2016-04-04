@@ -1,6 +1,6 @@
 module.exports = {
   entry: {
-    "entry":"./touch.js"
+    "entry":"./vue-gesture.js"
   },
   output: {
     path: "dist",
