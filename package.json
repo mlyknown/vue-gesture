@@ -1,6 +1,6 @@
 {
   "name": "vue-gesture",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "gestures events plugin for Vue.js",
   "main": "vue-gesture",
   "scripts": {

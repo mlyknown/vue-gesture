@@ -30,17 +30,17 @@ http://localhost:8080/webpack-dev-server/example.html
 #### Using the `v-gesture` directive
 
 ``` html
-<div class="button" v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
-<div class="button" v-gesture:touchmove.stop.prevent="handle($event, 'touchmove')">touchmove</div>
-<div class="button" v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
-<div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
-<div class="button" v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
-<div class="button" v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
-<div class="button" v-gesture:swipe="handle($event, 'swipe')">swipe</div>
-<div class="button" v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
-<div class="button" v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
-<div class="button" v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
-<div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
+<div v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
+<div v-gesture:touchmove="handle($event, 'touchmove')">touchmove</div>
+<div v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
+<div v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
+<div v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
+<div v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
+<div v-gesture:swipe="handle($event, 'swipe')">swipe</div>
+<div v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
+<div v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
+<div v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
+<div v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
 ```
 
 #### Configuring Recognizer Options

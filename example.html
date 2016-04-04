@@ -6,7 +6,7 @@
   <title></title>
   <style type="text/css">
     *{margin:  0; padding: 0;}
-    .button{width: 50px;height: 50px;background: #ADADAD;float: left;width: 40%;margin: 5%;word-break: normal;word-wrap: break-word;}
+    div{width: 50px;height: 50px;background: #ADADAD;float: left;width: 40%;margin: 5%;word-break: normal;word-wrap: break-word;}
   }
   </style>
   <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.20/vue.js"></script>
@@ -15,17 +15,17 @@
 
 <body id = 'app'>
 
-  <div class="button" v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
-  <div class="button" v-gesture:touchmove="handle($event, 'touchmove')">touchmove</div>
-  <div class="button" v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
-  <div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
-  <div class="button" v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
-  <div class="button" v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
-  <div class="button" v-gesture:swipe="handle($event, 'swipe')">swipe</div>
-  <div class="button" v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
-  <div class="button" v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
-  <div class="button" v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
-  <div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
+  <div v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
+  <div v-gesture:touchmove="handle($event, 'touchmove')">touchmove</div>
+  <div v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
+  <div v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
+  <div v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
+  <div v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
+  <div v-gesture:swipe="handle($event, 'swipe')">swipe</div>
+  <div v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
+  <div v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
+  <div v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
+  <div v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
 
 <script type="text/javascript">
   new Vue({
