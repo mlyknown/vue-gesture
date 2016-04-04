@@ -1,10 +1,15 @@
+/**
+ * Created by mlyknown on 4/1/16
+**/
+
 // tap — fires when the element is tapped.
-// singleTap and doubleTap — this pair of events can be used to detect both single and double taps on the same element (if you don’t need double tap detection, use tap instead).
+// doubleTap — this pair of events can be used to detect both single and double taps on the same element (if you don’t need double tap detection, use tap instead).
 // longTap — fires when an element is tapped and the finger is held down for more than 750ms.
 // swipe, swipeLeft, swipeRight, swipeUp, swipeDown — fires when an element is swiped (optionally in the given direction)
 
 (function(){
-  //tode 如果存在就不运行了 if(vueGesture) return;
+  //todo if(vueGesture) return;
+  if(vueGesture) return;
   var vueGesture = {};
   vueGesture.domCaches = {};
   vueGesture.gloabal = {
@@ -34,7 +39,9 @@
   vueGesture.config = {
     maxSingleTapTimeInterval : 300, // ms
     maxSingleTapPageDistanceSquared : 25, // within 5px we consider it as a single tap
-    minLongtapTimeInterval : 700
+    minLongtapTimeInterval : 750,
+    maxDoubleTapTimeInterval: 250,
+    maxDoubleTapPageDistanceSquared: 64 //8px
   };
 
   vueGesture.Statics = {       
@@ -48,7 +55,6 @@
         console.log("start");
         },false);
       self.el.addEventListener('touchmove',function(e) {
-        e.preventDefault();
         _self.touchmoveHandler(self, e);
         console.log("move", event.touches[0].pageX, event.touches[0].pageY);
       },false);
@@ -66,15 +72,15 @@
         e.preventDefault();
     },
     touchstartHandler : function(self, e) {
-        var domCache = vueGesture.Statics.getDomCache(self);
-        var touch = domCache.touch; 
-        if(this.isPrimaryTouch(e)) return;
-        touch.touchstartTime = e.timeStamp;
-        touch.touchstartCoord.pageX = e.touches[0].pageX;
-        touch.touchstartCoord.pageY = e.touches[0].pageY;
+      var domCache = vueGesture.Statics.getDomCache(self);
+      var touch = domCache.touch; 
+      if(this.isPrimaryTouch(e)) return;
+      touch.touchstartTime = e.timeStamp;
+      touch.touchstartCoord.pageX = e.touches[0].pageX;
+      touch.touchstartCoord.pageY = e.touches[0].pageY;
     },
     touchmoveHandler : function(self ,e){
-
+      e.preventDefault();
     },
     touchendHandler : function(self, e) {
       var _self = this;
@@ -155,34 +161,36 @@
       return (event.touches.length > 1 || event.scale && event.scale !== 1);
     }
   };
-
-
   vueGesture.judgements = {
     'tap': function(touch){
       return (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
     },
-    'singletap': function(touch){},
     'longtap': function(touch){
-      return (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) > vueGesture.config.minLongtapTimeInterval;
+      return (touch.timeInterval > vueGesture.config.minLongtapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
     },
-    'doubletap': function(touch){},
+    'doubletap': function(touch){
+      return touch.deltaTime < vueGesture.config.maxDoubleTapTimeInterval && 
+        (touch.lastPageXDistance * touch.lastPageXDistance + touch.lastPageYDistance * touch.lastPageYDistance) < vueGesture.config.maxDoubleTapPageDistanceSquared &&
+        (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared &&
+        (touch.lastTimeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.lastPageXDistance * touch.lastPageXDistance + touch.lastPageYDistance * touch.lastPageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
+    },
     'swipe': function(touch){
       return (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) > vueGesture.config.maxSingleTapPageDistanceSquared;
     },
     'swipeleft': function(touch){
-      if(this['swipe'](touch)) return false;
+      if(!this['swipe'](touch)) return false;
       return touch.pageXDistance < 0 && Math.abs(touch.pageXDistance) > Math.abs(touch.pageYDistance);
     },
     'swiperight': function(touch){
-      if(this['swipe'](touch)) return false;
+      if(!this['swipe'](touch)) return false;
       return touch.pageXDistance > 0 && Math.abs(touch.pageXDistance) > Math.abs(touch.pageYDistance);
     },
     'swipeup': function(touch){
-      if(this['swipe'](touch)) return false;
+      if(!this['swipe'](touch)) return false;
       return touch.pageYDistance < 0 && Math.abs(touch.pageYDistance) > Math.abs(touch.pageXDistance);
     },
     'swipedown': function(touch){
-      if(this['swipe'](touch)) return false;
+      if(!this['swipe'](touch)) return false;
       return touch.pageYDistance > 0 && Math.abs(touch.pageYDistance) > Math.abs(touch.pageXDistance);
     }
   };

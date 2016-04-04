@@ -15,16 +15,15 @@
 
 <body id = 'app'>
 
-<div class="button" v-gesture::tap="handle($event, 'tap')" v-gesture:swipe="handle($event, 'swipe')"></div>
-<div class="button" v-gesture::tap="handle($event, 'tap')"></div>
-<div class="button" v-gesture::singletap="handle($event, 'singleTap')"></div>
-<div class="button" v-gesture::doubletap="handle($event, 'doubleTap')"></div>
-<div class="button" v-gesture::longTap="handle($event, 'longTap')"></div>
-<div class="button" v-gesture::swipe="handle($event, 'swipe')"></div>
-<div class="button" v-gesture::swipeLeft="handle($event, 'swipeLeft')"></div>
-<div class="button" v-gesture::swipeRight="handle($event, 'swipeRight')"></div>
-<div class="button" v-gesture::swipeUp="handle($event, 'swipeUp')"></div>
-<div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')"></div>
+  <div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')" v-gesture:swipe.stop.prevent="handle($event, 'swipe')"></div>
+  <div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
+  <div class="button" v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
+  <div class="button" v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
+  <div class="button" v-gesture:swipe="handle($event, 'swipe')">swipe</div>
+  <div class="button" v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
+  <div class="button" v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
+  <div class="button" v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
+  <div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
 
 <script type="text/javascript">
   new Vue({
@@ -34,7 +33,7 @@
     },
     methods: {
       handle: function(e, str){
-        e.target.innerHTML += (str+"  ")
+        e.target.innerHTML += ("  " + str)
       }
     }
   })
