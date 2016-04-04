@@ -40,7 +40,7 @@
     maxSingleTapTimeInterval : 300, // ms
     maxSingleTapPageDistanceSquared : 25, // within 5px we consider it as a single tap
     minLongtapTimeInterval : 750,
-    maxDoubleTapTimeInterval: 250,
+    maxDoubleTapTimeInterval: 300,
     maxDoubleTapPageDistanceSquared: 64 //8px
   };
 
