@@ -7,15 +7,15 @@
 // longTap — fires when an element is tapped and the finger is held down for more than 750ms.
 // swipe, swipeLeft, swipeRight, swipeUp, swipeDown — fires when an element is swiped (optionally in the given direction)
 
-(function(){
-  //todo if(vueGesture) return;
-  if(vueGesture) return;
+;(function(){
+  if(vueGesture && vueGesture.config && vueGesture.config.id === "vue-Gesture@ylminglmingming@gmail.com") return;
   var vueGesture = {};
-  vueGesture.domCaches = {};
   vueGesture.gloabal = {
+    id: "vue-Gesture@ylminglmingming@gmail.com",
     domUuid : 1,
     InternalKeyName : "vueGestureInternalKey"
   }
+  vueGesture.domCaches = {};
   vueGesture.util={
         getType:function(o){    //判断对象类型
             var _t;
@@ -51,41 +51,61 @@
       if(b) return;
       var domCache = vueGesture.Statics.getDomCache(self);
       self.el.addEventListener('touchstart',function(e) {
+        if(_self.isPrimaryTouch(e)) return;
         _self.touchstartHandler(self, e);
         console.log("start");
         },false);
       self.el.addEventListener('touchmove',function(e) {
+        if(_self.isPrimaryTouch(e)) return;
         _self.touchmoveHandler(self, e);
         console.log("move", event.touches[0].pageX, event.touches[0].pageY);
       },false);
       self.el.addEventListener('touchend',function(e) {
+        if(_self.isPrimaryTouch(e)) return;
         _self.touchendHandler(self, e);
       },false);
     },
     invokeHandler : function(e, o, touch, gestureName){
       if (vueGesture.judgements[gestureName](touch)) {
-        o.fn(e);;
+        o.fn(e);
+        if(o.modifiers.stop)
+          e.stopPropagation();
+        if(o.modifiers.prevent)
+          e.preventDefault();
       }
-      if(o.modifiers.stop)
-        e.stopPropagation();
-      if(o.modifiers.prevent)
-        e.preventDefault();
     },
     touchstartHandler : function(self, e) {
       var domCache = vueGesture.Statics.getDomCache(self);
       var touch = domCache.touch; 
-      if(this.isPrimaryTouch(e)) return;
+      var o = domCache.gestureEvents['touchstart'];
+      if (o) {
+        o.fn(e);
+        if(o.modifiers.stop)
+          e.stopPropagation();
+        if(o.modifiers.prevent)
+          e.preventDefault();
+      }
       touch.touchstartTime = e.timeStamp;
       touch.touchstartCoord.pageX = e.touches[0].pageX;
       touch.touchstartCoord.pageY = e.touches[0].pageY;
     },
     touchmoveHandler : function(self ,e){
       e.preventDefault();
+      var domCache = vueGesture.Statics.getDomCache(self);
+      var touch = domCache.touch; 
+      var o = domCache.gestureEvents['touchmove'];
+      if (o) {
+        o.fn(e);
+        if(o.modifiers.stop)
+          e.stopPropagation();
+        if(o.modifiers.prevent)
+          e.preventDefault();
+      }
     },
     touchendHandler : function(self, e) {
       var _self = this;
       var domCache = vueGesture.Statics.getDomCache(self);
-      var touch = domCache.touch; 
+      var touch = domCache.touch;
       touch.touchendTime = e.timeStamp;
       touch.touchendCoord.pageX = e.changedTouches[0].pageX;
       touch.touchendCoord.pageY = e.changedTouches[0].pageY;
@@ -192,7 +212,11 @@
     'swipedown': function(touch){
       if(!this['swipe'](touch)) return false;
       return touch.pageYDistance > 0 && Math.abs(touch.pageYDistance) > Math.abs(touch.pageXDistance);
-    }
+    },
+    //not calculate
+    'touchstart': function(){return false},
+    'touchmove': function(){return false},
+    'touchend': function(){return true}
   };
   vueGesture.install = function(Vue){
     Vue.directive('gesture', {

@@ -2,7 +2,7 @@ http://localhost:8080/webpack-dev-server/example.html
 
 # vue-gesture
 
-> gesture events plugin for Vue.js
+> gesture events plugin for Vue.js.You can v-gesture directive,and directive auguments can use a tap, swipe, etc.
 - tap — fires when the element is tapped.
 - doubleTap — this pair of events can be used to detect double taps on the same element
 - longTap — fires when an element is tapped and the finger is held down for more than 750ms.
@@ -29,15 +29,17 @@ http://localhost:8080/webpack-dev-server/example.html
 #### Using the `v-gesture` directive
 
 ``` html
-<div class="button" v-gesture::tap="handle($event, 'tap')"></div>
-<div class="button" v-gesture::singletap="handle($event, 'singleTap')"></div>
-<div class="button" v-gesture::doubletap="handle($event, 'doubleTap')"></div>
-<div class="button" v-gesture::longTap="handle($event, 'longTap')"></div>
-<div class="button" v-gesture::swipe="handle($event, 'swipe')"></div>
-<div class="button" v-gesture::swipeLeft="handle($event, 'swipeLeft')"></div>
-<div class="button" v-gesture::swipeRight="handle($event, 'swipeRight')"></div>
-<div class="button" v-gesture::swipeUp="handle($event, 'swipeUp')"></div>
-<div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')"></div>
+<div class="button" v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
+<div class="button" v-gesture:touchmove.stop.prevent="handle($event, 'touchmove')">touchmove</div>
+<div class="button" v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
+<div class="button" v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
+<div class="button" v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
+<div class="button" v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
+<div class="button" v-gesture:swipe="handle($event, 'swipe')">swipe</div>
+<div class="button" v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
+<div class="button" v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
+<div class="button" v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
+<div class="button" v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
 ```
 
 #### Configuring Recognizer Options
