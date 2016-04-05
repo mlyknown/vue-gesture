@@ -18,18 +18,18 @@
   }
   vueGesture.domCaches = {};
   vueGesture.util={
-        getType:function(o){    //判断对象类型
+        getType:function(o){   
           var _t;
           return ((_t = typeof(o)) == "object" ? o==null && "null" || Object.prototype.toString.call(o).slice(8,-1):_t).toLowerCase();
         },
-        deepClone:function(source){    //深拷贝
-          var self=this;    //保存当前对象引用
+        deepClone:function(source){    
+          var self=this;   
           var destination=self.getType(source);
           destination=destination==='array'?[]:(destination==='object'?{}:source);
           for (var p in source) {
               if (self.getType(source[p]) === "array" || self.getType(source[p]) === "object") {
                   destination[p] = self.getType(source[p]) === "array" ? [] : {};
-                  destination[p]=arguments.callee.call(self, source[p]);    //使用call修改函数的作用域
+                  destination[p]=arguments.callee.call(self, source[p]);    
               } else {
                   destination[p] = source[p];
               }
@@ -59,13 +59,11 @@
         if (_self.isPC()) {return}
         if(_self.isPrimaryTouch(e)) return;
         _self.touchstartHandler(self, e);
-        // console.log("start");
       }
       domCache.listenTouchEvents.touchmove = function(e) {
         if (_self.isPC()) {return}
         if(_self.isPrimaryTouch(e)) return;
         _self.touchmoveHandler(self, e);
-        // console.log("move", event.touches[0].pageX, event.touches[0].pageY);
       }
       domCache.listenTouchEvents.touchend = function(e) {
         if(e.type != "touchend") return;
@@ -84,12 +82,9 @@
       self.el.addEventListener('click',domCache.listenTouchEvents.click,false);
     },
     invokeHandler : function(e, o, touch, gestureName){
+      var _self = this;
       if (vueGesture.judgements[gestureName](touch)) {
-        o.fn(e);
-        if(o.modifiers.stop)
-          e.stopPropagation();
-        if(o.modifiers.prevent)
-          e.preventDefault();
+        _self.executeFn(e, o);
       }
     },
     clickHandler: function(self , e){
@@ -98,11 +93,7 @@
       var touch = domCache.touch;
       var o = domCache.gestureEvents['click'];
       if (o) {
-        o.fn(e);
-        if(o.modifiers.stop)
-          e.stopPropagation();
-        if(o.modifiers.prevent)
-          e.preventDefault();
+        _self.executeFn(e ,o);
       }
       if (_self.isPC()) {
         vueGesture.config.gestureEventsToClick.forEach(function(elem){
@@ -131,7 +122,7 @@
       var touch = domCache.touch;
       var o = domCache.gestureEvents['touchmove'];
       if (o) {
-
+        _self.executeFn(e , o);
       }
     },
     touchendHandler : function(self, e) {
@@ -232,6 +223,7 @@
     },
     executeFn: function(e ,o){
       o.fn(e);
+      // console.log(o,e.type);
       if(o.modifiers.stop)
         e.stopPropagation();
       if(o.modifiers.prevent)
@@ -294,7 +286,7 @@
         var eventName = vueGesture.Statics.getEventNameByArg(self.arg);
         var domCache = vueGesture.Statics.getDomCache(self);
         if(!eventName) {
-          console.error("self.arg not corrent argument");
+          console.error("self.arg not corrent argument;");
           return;
         }
         domCache.gestureEvents[eventName] = {},
