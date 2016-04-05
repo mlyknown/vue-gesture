@@ -2,12 +2,13 @@ http://localhost:8080/webpack-dev-server/example.html
 
 # vue-gesture
 
-> gesture events plugin for Vue.js.You can v-gesture directive,and directive auguments can use a tap, swipe, touchstart etc.
+> gesture events plugin for Vue.js.You can v-gesture directive,and directive auguments can use a tap, swipe, touchstart etc.When you are in the use of the PC，"tap, longtap, touchstart" Will automatically be converted to "click".
+
 - tap — fires when the element is tapped.
 - doubleTap — this pair of events can be used to detect double taps on the same element
 - longTap — fires when an element is tapped and the finger is held down for more than 750ms.
 - swipe, swipeLeft, swipeRight, swipeUp, swipeDown — fires when an element is swiped 
-- touchstart touchmove touchend - These equivalent to touch the primary event
+- touchstart touchmove touchend click- These equivalent to touch the primary event 
 
 
 ## Install
