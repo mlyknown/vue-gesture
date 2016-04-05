@@ -120,7 +120,7 @@
       touch.lastTouchstartTime = touch.touchstartTime;
       touch.lastTouchendTime = touch.touchendTime;
       touch.lastTouchstartCoord = vueGesture.util.deepClone(touch.touchstartCoord);
-      touch.lastTouchstartCoord = vueGesture.util.deepClone(touch.touchendCoord);
+      touch.lastTouchendCoord = vueGesture.util.deepClone(touch.touchendCoord);
     },
     getDomCache : function(self) {
         return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] ||
@@ -132,7 +132,7 @@
     unbindDirective : function(self) {
       var domCache = vueGesture.Statics.getDomCache(self);
       vueGesture.Statics.removeDirectiveEventListeners(self, domCache);
-      //todo 内存回收
+      //todo Memory recovery
       vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] = null;
       delete vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]];
     },
@@ -147,7 +147,7 @@
           lastTouchendTime : 0,
           lastTouchstartTime: 0,
           lastTouchstartCoord : {},
-          lastPageXDistance : {},
+          lastTouchendCoord: {},
 
           get timeInterval () {
             return this.touchendTime - this.touchstartTime;
