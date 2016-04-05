@@ -45,26 +45,29 @@
     maxDoubleTapPageDistanceSquared: 64 //8px
   };
 
-  vueGesture.Statics = {       
+  vueGesture.Statics = {
     initEvents : function(self){
       var _self = this;
       var b = vueGesture.Statics.isInDomCaches(self);
       if(b) return;
       var domCache = vueGesture.Statics.getDomCache(self);
-      self.el.addEventListener('touchstart',function(e) {
+      domCache.listenTouchEvents.touchstart = function(e) {
         if(_self.isPrimaryTouch(e)) return;
         _self.touchstartHandler(self, e);
         // console.log("start");
-        },false);
-      self.el.addEventListener('touchmove',function(e) {
+      }
+      domCache.listenTouchEvents.touchmove = function(e) {
         if(_self.isPrimaryTouch(e)) return;
         _self.touchmoveHandler(self, e);
         // console.log("move", event.touches[0].pageX, event.touches[0].pageY);
-      },false);
-      self.el.addEventListener('touchend',function(e) {
+      }
+      domCache.listenTouchEvents.touchend = function(e) {
         if(_self.isPrimaryTouch(e)) return;
         _self.touchendHandler(self, e);
-      },false);
+      }
+      self.el.addEventListener('touchstart',domCache.listenTouchEvents.touchstart,false);
+      self.el.addEventListener('touchmove',domCache.listenTouchEvents.touchmove,false);
+      self.el.addEventListener('touchend',domCache.listenTouchEvents.touchend,false);
     },
     invokeHandler : function(e, o, touch, gestureName){
       if (vueGesture.judgements[gestureName](touch)) {
@@ -77,7 +80,7 @@
     },
     touchstartHandler : function(self, e) {
       var domCache = vueGesture.Statics.getDomCache(self);
-      var touch = domCache.touch; 
+      var touch = domCache.touch;
       var o = domCache.gestureEvents['touchstart'];
       if (o) {
         o.fn(e);
@@ -91,11 +94,11 @@
       touch.touchstartCoord.pageY = e.touches[0].pageY;
     },
     touchmoveHandler : function(self ,e){
-      e.preventDefault();
       var domCache = vueGesture.Statics.getDomCache(self);
-      var touch = domCache.touch; 
+      var touch = domCache.touch;
       var o = domCache.gestureEvents['touchmove'];
       if (o) {
+        e.preventDefault();
         o.fn(e);
         if(o.modifiers.stop)
           e.stopPropagation();
@@ -120,16 +123,18 @@
       touch.lastTouchstartCoord = vueGesture.util.deepClone(touch.touchendCoord);
     },
     getDomCache : function(self) {
-        return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] || 
+        return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] ||
           (vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName] = vueGesture.gloabal.domUuid++] = this.initDomCache());
     },
     isInDomCaches : function(self){
         return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] ? true : false;
     },
     unbindDirective : function(self) {
-      self.el.removeEventListener('click', invokeHandler)
-      self.el.removeEventListener('touchend', handleTouchEnd)
-      self.el.removeEventListener('touchstart', handleTouchStart)
+      var domCache = vueGesture.Statics.getDomCache(self);
+      vueGesture.Statics.removeDirectiveEventListeners(self, domCache);
+      //todo 内存回收
+      vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] = null;
+      delete vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]];
     },
     initDomCache : function(){
       return {
@@ -166,7 +171,8 @@
             return this.touchendTime - this.lastTouchstartTime;
           }
         },
-        gestureEvents: {}
+        gestureEvents: {},
+        listenTouchEvents: {}
       }
     },
     getEventNameByArg : function(arg){
@@ -180,6 +186,11 @@
     isPrimaryTouch : function(event){
       // ensure swiping with one touch and not pinching
       return (event.touches.length > 1 || event.scale && event.scale !== 1);
+    },
+    removeDirectiveEventListeners : function(self, domCache){
+      self.el.removeEventListener('touchstart', domCache.listenTouchEvents.touchstart);
+      self.el.removeEventListener('touchmove', domCache.listenTouchEvents.touchmove);
+      self.el.removeEventListener('touchend', domCache.listenTouchEvents.touchend);
     }
   };
   vueGesture.judgements = {
@@ -190,7 +201,7 @@
       return (touch.timeInterval > vueGesture.config.minLongtapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
     },
     'doubletap': function(touch){
-      return touch.deltaTime < vueGesture.config.maxDoubleTapTimeInterval && 
+      return touch.deltaTime < vueGesture.config.maxDoubleTapTimeInterval &&
         (touch.lastPageXDistance * touch.lastPageXDistance + touch.lastPageYDistance * touch.lastPageYDistance) < vueGesture.config.maxDoubleTapPageDistanceSquared &&
         (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared &&
         (touch.lastTimeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.lastPageXDistance * touch.lastPageXDistance + touch.lastPageYDistance * touch.lastPageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
@@ -246,7 +257,8 @@
       },
 
       unbind: function () {
-        vueGesture.Statics.unbindDirective(this);
+        var self = this;
+        vueGesture.Statics.unbindDirective(self);
       }
     });
   }
