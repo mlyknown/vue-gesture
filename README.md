@@ -1,4 +1,4 @@
-http://localhost:8080/webpack-dev-server/example.html
+http://localhost:8080/example.html
 
 # vue-gesture
 
