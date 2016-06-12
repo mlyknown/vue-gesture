@@ -281,7 +281,7 @@
       update: function (fn) {
         var self = this;
         if(typeof fn !== 'function') {
-          return console.error('The param of directive "v-tap" must be a function!');
+          return console.error('The expression of directive "v-gesture" must be a function!');
         }
         var eventName = vueGesture.Statics.getEventNameByArg(self.arg);
         var domCache = vueGesture.Statics.getDomCache(self);
