@@ -11,7 +11,8 @@
   </style>
   <script type="text/javascript" src="https://unpkg.com/vue@2.4.1"></script>
 
-  <script src="./vue-gesture.js"></script>
+
+  <script src="dist/vue-gesture.js"></script>
 </head>
 
 <body >
@@ -30,14 +31,19 @@
   <vue-gesture :type="'click'"  :call="handleComponent.bind(this,'click')">click</vue-gesture>
 
 </div>
+
+
 <script type="text/javascript">
-  new Vue({
+    
+
+    new Vue({
   el: '#app',
     data: {
       message: 'Hello Vue.js!'
     },
     methods: {
         handleComponent: function(str,e){
+            console.log(e);
             var html = e.srcElement.innerHTML;
             e.srcElement.innerHTML=html+" "+str;
             console.log(str);

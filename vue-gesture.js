@@ -291,12 +291,13 @@
             var self = this;
             vueGesture.Statics.initEvents(this.$el);
             if(typeof this.call !== 'function') {
+              console.log(this.call);
                 return console.error('The expression of directive "v-gesture" must be a function!');
             }
             var eventName = vueGesture.Statics.getEventNameByArg(this.type);
             var domCache = vueGesture.Statics.getDomCache(this.$el);
             if(!eventName) {
-                console.error("self.arg not corrent argument;");
+                //console.error("self.arg not correct argument;");
                 return;
             }
             domCache.gestureEvents[eventName] = {};

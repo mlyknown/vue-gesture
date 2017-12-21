@@ -1,8 +1,6 @@
-http://localhost:8080/example.html
-
 # vue-gesture
 
-> gesture events plugin for Vue.js.You can v-gesture directive,and directive auguments can use a tap, swipe, touchstart etc.When you are in the use of the PC，"tap, longtap, touchstart" Will automatically be converted to "click".
+> gesture events plugin for Vue.js 2. You can v-gesture directive,and directive auguments can use a tap, swipe, touchstart etc.When you are in the use of the PC，"tap, longtap, touchstart" Will automatically be converted to "click".
 
 - tap — fires when the element is tapped.
 - doubleTap — this pair of events can be used to detect double taps on the same element
@@ -31,17 +29,19 @@ http://localhost:8080/example.html
 #### Using the `v-gesture` directive
 
 ``` html
-<div v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
-<div v-gesture:touchmove="handle($event, 'touchmove')">touchmove</div>
-<div v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
-<div v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
-<div v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
-<div v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
-<div v-gesture:swipe="handle($event, 'swipe')">swipe</div>
-<div v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
-<div v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
-<div v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
-<div v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
+<vue-gesture :type="'touchstart'"  :call="handleComponent.bind(this,'touchstart')" >touchstart</vue-gesture>
+  <vue-gesture :type="'touchmove'"  :call="handleComponent.bind(this,'touchmove')" ><i>touchmove</i></vue-gesture>
+  <vue-gesture :type="'touchend'"  :call="handleComponent.bind(this,'touchend')" >touchend</vue-gesture>
+  <vue-gesture :type="'tab'"  :call="handleComponent.bind(this,'tab')" >tap</vue-gesture>
+  <vue-gesture :type="'doubletap'"  :call="handleComponent.bind(this,'doubletap')">doubleTap</vue-gesture>
+  <vue-gesture :type="'longTap'"  :call="handleComponent.bind(this,'longTap')">longTap</vue-gesture>
+  <vue-gesture :type="'swipe'"  :call="handleComponent.bind(this,'swipe')">swipe</vue-gesture>
+  <vue-gesture :type="'swipeLeft'"  :call="handleComponent.bind(this,'swipeLeft')">swipeLeft</vue-gesture>
+  <vue-gesture :type="'swipeRight'"  :call="handleComponent.bind(this,'swipeRight')">swipeRight</vue-gesture>
+  <vue-gesture :type="'swipeUp'"  :call="handleComponent.bind(this,'swipeUp')">swipeUp</vue-gesture>
+  <vue-gesture :type="'swipeDown'"  :call="handleComponent.bind(this,'swipeDown')">swipeDown</vue-gesture>
+  <vue-gesture :type="'click'"  :call="handleComponent.bind(this,'click')">click</vue-gesture>
+
 ```
 
 #### Configuring Recognizer Options
