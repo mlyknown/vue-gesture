@@ -3,12 +3,13 @@
 var webpack = require('webpack');
 var uglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 // var HtmlWebpackPlugin = require('html-webpack-plugin');
-var OpenBrowserPlugin = require('open-browser-webpack-plugin');
+//var OpenBrowserPlugin = require('open-browser-webpack-plugin');
 
 module.exports = {
   entry: './vue-gesture.js',
   output: {
-    filename: './dist/vue-gesture.js'
+    path:'./dist',
+    filename: 'vue-gesture.js'
   },
   plugins: [
     new uglifyJsPlugin({
@@ -20,8 +21,8 @@ module.exports = {
     // new HtmlwebpackPlugin({
     //   title: 'vue-gesture'
     // }),
-    new OpenBrowserPlugin({
+    /*new OpenBrowserPlugin({
       url: 'http://localhost:8080'
-    })
+    })*/
   ]
 };

@@ -1,6 +1,6 @@
 {
   "name": "vue-gesture",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "description": "gestures events plugin for Vue.js",
   "main": "vue-gesture",
   "scripts": {
@@ -22,5 +22,8 @@
     "http-server": "^0.9.0",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "build": "^0.1.4"
   }
 }

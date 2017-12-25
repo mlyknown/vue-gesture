@@ -55,6 +55,7 @@
       var b = vueGesture.Statics.isInDomCaches(self);
       if(b) return;
       var domCache = vueGesture.Statics.getDomCache(self);
+
       domCache.listenTouchEvents.touchstart = function(e) {
         if (_self.isPC()) {return}
         if(_self.isPrimaryTouch(e)) return;
@@ -76,12 +77,13 @@
         // if(_self.isPrimaryTouch(e)) return;
         _self.clickHandler(self, e);
       }
-      self.el.addEventListener('touchstart',domCache.listenTouchEvents.touchstart,false);
-      self.el.addEventListener('touchmove',domCache.listenTouchEvents.touchmove,false);
-      self.el.addEventListener('touchend',domCache.listenTouchEvents.touchend,false);
-      self.el.addEventListener('click',domCache.listenTouchEvents.click,false);
+      self.addEventListener('touchstart',domCache.listenTouchEvents.touchstart,false);
+      self.addEventListener('touchmove',domCache.listenTouchEvents.touchmove,false);
+      self.addEventListener('touchend',domCache.listenTouchEvents.touchend,false);
+      self.addEventListener('click',domCache.listenTouchEvents.click,false);
     },
     invokeHandler : function(e, o, touch, gestureName){
+
       var _self = this;
       if (vueGesture.judgements[gestureName](touch)) {
         _self.executeFn(e, o);
@@ -105,6 +107,7 @@
       }
     },
     touchstartHandler : function(self, e) {
+
       var _self = this;
       var domCache = vueGesture.Statics.getDomCache(self);
       var touch = domCache.touch;
@@ -142,11 +145,12 @@
       touch.lastTouchendCoord = vueGesture.util.deepClone(touch.touchendCoord);
     },
     getDomCache : function(self) {
-        return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] ||
-          (vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName] = vueGesture.gloabal.domUuid++] = this.initDomCache());
+        return vueGesture.domCaches[self[vueGesture.gloabal.InternalKeyName]] ||
+          (vueGesture.domCaches[self[vueGesture.gloabal.InternalKeyName] = vueGesture.gloabal.domUuid++] = this.initDomCache());
     },
     isInDomCaches : function(self){
-        return vueGesture.domCaches[self.el[vueGesture.gloabal.InternalKeyName]] ? true : false;
+
+      return vueGesture.domCaches[self[vueGesture.gloabal.InternalKeyName]] ? true : false;
     },
     unbindDirective : function(self) {
       var domCache = vueGesture.Statics.getDomCache(self);
@@ -216,20 +220,26 @@
       return flag;
     },
     removeDirectiveEventListeners : function(self, domCache){
-      self.el.removeEventListener('touchstart', domCache.listenTouchEvents.touchstart);
-      self.el.removeEventListener('touchmove', domCache.listenTouchEvents.touchmove);
-      self.el.removeEventListener('touchend', domCache.listenTouchEvents.touchend);
-      self.el.removeEventListener('click', domCache.listenTouchEvents.click);
+      self.removeEventListener('touchstart', domCache.listenTouchEvents.touchstart);
+      self.removeEventListener('touchmove', domCache.listenTouchEvents.touchmove);
+      self.removeEventListener('touchend', domCache.listenTouchEvents.touchend);
+      self.removeEventListener('click', domCache.listenTouchEvents.click);
     },
     executeFn: function(e ,o){
       o.fn(e);
-      // console.log(o,e.type);
-      if(o.modifiers.stop)
-        e.stopPropagation();
-      if(o.modifiers.prevent)
-        e.preventDefault();
+       if(typeof o.modifiers != "undefined")
+       {
+         if(o.modifiers.stop)
+             e.stopPropagation();
+         if(o.modifiers.prevent)
+             e.preventDefault();
+       }
+
     }
   };
+
+
+
   vueGesture.judgements = {
     'tap': function(touch){
       return (touch.timeInterval < vueGesture.config.maxSingleTapTimeInterval) && (touch.pageXDistance * touch.pageXDistance + touch.pageYDistance * touch.pageYDistance) < vueGesture.config.maxSingleTapPageDistanceSquared;
@@ -268,47 +278,36 @@
     'touchend': function(){return true},
     'click': function(){return false;}
   };
-  vueGesture.install = function(Vue){
-    Vue.directive('gesture', {
-      acceptStatement: true,
-      priority: Vue.directive('on').priority,
 
-      bind: function () {
-        var self = this;
-        var domCache = vueGesture.Statics.initEvents(self);
-      },
 
-      update: function (fn) {
-        var self = this;
-        if(typeof fn !== 'function') {
-          return console.error('The expression of directive "v-gesture" must be a function!');
+    Vue.component('vue-gesture', {
+        template: '<span><slot></slot></span>',
+        props: {
+            type: {type: String, default: function () { return "touch" }},
+            call: {type: Function }
+
+        },
+        mounted: function () {
+            var self = this;
+            vueGesture.Statics.initEvents(this.$el);
+            if(typeof this.call !== 'function') {
+              console.log(this.call);
+                return console.error('The expression of directive "v-gesture" must be a function!');
+            }
+            var eventName = vueGesture.Statics.getEventNameByArg(this.type);
+            var domCache = vueGesture.Statics.getDomCache(this.$el);
+            if(!eventName) {
+                //console.error("self.arg not correct argument;");
+                return;
+            }
+            domCache.gestureEvents[eventName] = {};
+            domCache.gestureEvents[eventName].fn = this.call;
+
+
+        },
+        data: function () {
+            return {};
         }
-        var eventName = vueGesture.Statics.getEventNameByArg(self.arg);
-        var domCache = vueGesture.Statics.getDomCache(self);
-        if(!eventName) {
-          console.error("self.arg not corrent argument;");
-          return;
-        }
-        domCache.gestureEvents[eventName] = {},
-        domCache.gestureEvents[eventName].fn = fn;
-        domCache.gestureEvents[eventName].modifiers = self.modifiers;
-      },
-
-      unbind: function () {
-        var self = this;
-        vueGesture.Statics.unbindDirective(self);
-      }
     });
-  }
 
-  if (typeof exports === 'object') {
-    module.exports = vueGesture;
-  } else if (typeof define === 'function' && define.amd) {
-    define([], function() {
-      return vueGesture;
-    })
-  } else if (window.Vue) {
-    window.vueGesture = vueGesture;
-    Vue.use(vueGesture);
-  }
 })()

@@ -6,39 +6,48 @@
   <title></title>
   <style type="text/css">
     *{margin:  0; padding: 0;}
-    div{width: 50px;height: 50px;background: #ADADAD;float: left;width: 40%;margin: 5%;word-break: normal;word-wrap: break-word;}
-  }
-  </style>
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.20/vue.js"></script>
+    span{width: 50px;height: 50px;background: #ADADAD;float: left;width: 40%;margin: 5%;word-break: normal;word-wrap: break-word;}
 
-  <script src="./vue-gesture.js"></script>
+  </style>
+  <script type="text/javascript" src="https://unpkg.com/vue@2.4.1"></script>
+
+
+  <script src="dist/vue-gesture.js"></script>
 </head>
 
-<body id = 'app'>
+<body >
+<div id = 'app'>
+  <vue-gesture :type="'touchstart'"  :call="handleComponent.bind(this,'touchstart')" >touchstart</vue-gesture>
+  <vue-gesture :type="'touchmove'"  :call="handleComponent.bind(this,'touchmove')" ><i>touchmove</i></vue-gesture>
+  <vue-gesture :type="'touchend'"  :call="handleComponent.bind(this,'touchend')" >touchend</vue-gesture>
+  <vue-gesture :type="'tab'"  :call="handleComponent.bind(this,'tab')" >tap</vue-gesture>
+  <vue-gesture :type="'doubletap'"  :call="handleComponent.bind(this,'doubletap')">doubleTap</vue-gesture>
+  <vue-gesture :type="'longTap'"  :call="handleComponent.bind(this,'longTap')">longTap</vue-gesture>
+  <vue-gesture :type="'swipe'"  :call="handleComponent.bind(this,'swipe')">swipe</vue-gesture>
+  <vue-gesture :type="'swipeLeft'"  :call="handleComponent.bind(this,'swipeLeft')">swipeLeft</vue-gesture>
+  <vue-gesture :type="'swipeRight'"  :call="handleComponent.bind(this,'swipeRight')">swipeRight</vue-gesture>
+  <vue-gesture :type="'swipeUp'"  :call="handleComponent.bind(this,'swipeUp')">swipeUp</vue-gesture>
+  <vue-gesture :type="'swipeDown'"  :call="handleComponent.bind(this,'swipeDown')">swipeDown</vue-gesture>
+  <vue-gesture :type="'click'"  :call="handleComponent.bind(this,'click')">click</vue-gesture>
 
-  <div v-gesture:touchstart.stop.prevent="handle($event, 'touchstart')">touchstart</div>
-  <div v-gesture:touchmove="handle($event, 'touchmove')">touchmove</div>
-  <div v-gesture:touchend.stop.prevent="handle($event, 'touchend')">touchend</div>
-  <div v-gesture:tap.stop.prevent="handle($event, 'tap')">tap</div>
-  <div v-gesture:doubletap.stop.prevent="handle($event, 'doubleTap')">doubleTap</div>
-  <div v-gesture:longTap.stop.prevent="handle($event, 'longTap')">longTap</div>
-  <div v-gesture:swipe="handle($event, 'swipe')">swipe</div>
-  <div v-gesture:swipeLeft="handle($event, 'swipeLeft')">swipeLeft</div>
-  <div v-gesture:swipeRight="handle($event, 'swipeRight')">swipeRight</div>
-  <div v-gesture:swipeUp="handle($event, 'swipeUp')">swipeUp</div>
-  <div v-gesture:swipeDown="handle($event, 'swipeDown')">swipeDown</div>
-  <div v-gesture:click="handle($event, 'click')">click</div>
+</div>
+
 
 <script type="text/javascript">
-  new Vue({
+    
+
+    new Vue({
   el: '#app',
     data: {
       message: 'Hello Vue.js!'
     },
     methods: {
-      handle: function(e, str){
-        e.target.innerHTML += ("  " + str)
-      }
+        handleComponent: function(str,e){
+            console.log(e);
+            var html = e.srcElement.innerHTML;
+            e.srcElement.innerHTML=html+" "+str;
+            console.log(str);
+        }
     }
   })
 
