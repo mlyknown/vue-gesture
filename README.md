@@ -33,7 +33,7 @@ You can also directly include it with a `<script>` tag when you have Vue already
 ## Usage
 
 #### Using the `vue-gesture` component
-***WARNING: You may have to use <vue2-gesture> if you installed the npm version***
+***WARNING: You may have to use `<vue2-gesture>` if you installed the npm version***
 
 You can add a single event with the `type` parameter or you add a set of events with the `types` parameter which is
 a javascript array.
