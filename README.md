@@ -17,7 +17,7 @@
 
 #### CommonJS
 
-- The updated version is available through npm as `vue2-gesture`. So simply run `npm install vue2-gesture`. Then you can use it as follows:
+The updated version is available through npm as `vue2-gesture`. So simply run `npm install vue2-gesture`. Then you can use it as follows:
 
   ``` js
   // You may use: 
@@ -28,7 +28,7 @@
 
 #### Direct include
 
-- You can also directly include it with a `<script>` tag when you have Vue already included globally. It will automatically install itself, and will add a global `vueGesture`.
+You can also directly include it with a `<script>` tag when you have Vue already included globally. It will automatically install itself, and will add a global `vueGesture`.
 
 ## Usage
 
@@ -75,7 +75,7 @@ A simpler way to handle vue-gesture events have been provided by @sjoerdloeve an
 ```
 <vue-gesture :type="'tap'" :call="() => { changeProperty = true}" >tap</vue-gesture>
 ```
-_Where the type, of course, is changeable_
+_Where the type, of course, is changeable._
 
 
 #### Configuring Recognizer Options
