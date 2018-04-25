@@ -1,6 +1,10 @@
 # vue-gesture
 
-> gesture events plugin for Vue.js 2. You can v-gesture directive,and directive auguments can use a tap, swipe, touchstart etc.When you are in the use of the PC，"tap, longtap, touchstart" Will automatically be converted to "click".
+> **Vue-Gesture** is a simple Vue.js gesture events plugin.
+ >It runs now under Vue.js 2, which comes from a fork, to see here: https://github.com/bees4ever/vue2-gesture. The old version for Vue.js 1 is not longer available.
+ See the example for how to use this plugin, simply it's now a component and not a directive anymore.
+ There are a bunches of arguments you can use, i.e. tap, swipe, touchstart etc. 
+ When you are in the use of the PC，"tap, longtap, touchstart" will automatically be converted to "click".
 
 - tap — fires when the element is tapped.
 - doubleTap — this pair of events can be used to detect double taps on the same element
@@ -13,10 +17,12 @@
 
 #### CommonJS
 
-- Available through npm as `vue-gesture`.
+- The upadted version is available through npm as `vue2-gesture`. So simply run `npm install vue2-gesture`. Then you can use it as follows:
 
   ``` js
-  var VueGesture = require('vue-gesture')
+  // You may use: 
+    window.Vue = Vue;
+  var VueGesture = require('vue2-gesture')
   Vue.use(VueGesture)
   ```
 
@@ -26,14 +32,18 @@
 
 ## Usage
 
-#### Using the `v-gesture` directive
+#### Using the `vue-gesture` component
+***WARNING: You may have to use <vue2-gesture> if you installed the npm version***
+
+You can add a single event with the `type` parameter or you add a set of events with the `types` parameter which is
+a javascript array.
 
 ``` html
-<vue-gesture :type="'touchstart'"  :call="handleComponent.bind(this,'touchstart')" >touchstart</vue-gesture>
+ <vue-gesture :type="'touchstart'"  :call="handleComponent.bind(this,'touchstart')" >touchstart</vue-gesture>
   <vue-gesture :type="'touchmove'"  :call="handleComponent.bind(this,'touchmove')" ><i>touchmove</i></vue-gesture>
   <vue-gesture :type="'touchend'"  :call="handleComponent.bind(this,'touchend')" >touchend</vue-gesture>
-  <vue-gesture :type="'tab'"  :call="handleComponent.bind(this,'tab')" >tap</vue-gesture>
   <vue-gesture :type="'doubletap'"  :call="handleComponent.bind(this,'doubletap')">doubleTap</vue-gesture>
+  <vue-gesture :type="'tap'"  :call="handleComponent.bind(this,'tap')">tap</vue-gesture>
   <vue-gesture :type="'longTap'"  :call="handleComponent.bind(this,'longTap')">longTap</vue-gesture>
   <vue-gesture :type="'swipe'"  :call="handleComponent.bind(this,'swipe')">swipe</vue-gesture>
   <vue-gesture :type="'swipeLeft'"  :call="handleComponent.bind(this,'swipeLeft')">swipeLeft</vue-gesture>
@@ -41,8 +51,32 @@
   <vue-gesture :type="'swipeUp'"  :call="handleComponent.bind(this,'swipeUp')">swipeUp</vue-gesture>
   <vue-gesture :type="'swipeDown'"  :call="handleComponent.bind(this,'swipeDown')">swipeDown</vue-gesture>
   <vue-gesture :type="'click'"  :call="handleComponent.bind(this,'click')">click</vue-gesture>
+  <vue-gesture :types="['swipeDown','click']"   :call="handleComponent.bind(this,'EVENT')" >swipeDown and click</vue-gesture>
 
 ```
+
+Where `handleComponent` is a method in your Vue.js web-application. `handleComponent` should understand this two parameters:
+
+  ``` js
+ handleComponent: function(str,e){
+             // str is the second input, like 'longTap', 'touchmove', 
+             // there you can pass some information to the handler 
+             // e is the element itself, you may use it or not
+             var html = e.srcElement.innerHTML;
+             e.srcElement.innerHTML=html+" "+str;
+             console.log(str);
+         }
+  ```
+  
+#### EDIT:
+
+A simpler way to handle vue-gesture events have been provided by @sjoerdloeve and uses this syntax:
+
+```
+<vue-gesture :type="'tap'" :call="() => { changeProperty = true}" >tap</vue-gesture>
+```
+_Where the type, of course, is changable_
+
 
 #### Configuring Recognizer Options
 
@@ -61,4 +95,3 @@ See `/example` for a multi-event demo. To build it, run `npm install && npm run 
 ## License
 
 MIT
-
